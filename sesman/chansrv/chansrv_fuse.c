@@ -312,6 +312,8 @@ struct req_list_item
 static char g_fuse_mount_name[256] = "xrdp_client";
 static mode_t g_umask = 077; /* Umask for files in fs */
 
+extern const char *g_sesman_ini_file;        /* in chansrv.c */
+
 static struct list *g_req_list = 0;
 static struct xfs_fs *g_xfs;                 /* an inst of xrdp file system */
 static ino_t g_clipboard_inum;               /* inode of clipboard dir      */
@@ -404,7 +406,6 @@ int
 load_fuse_config(void)
 {
     int index;
-    char cfg_file[256];
     struct list *items;
     struct list *values;
     char *item;
@@ -414,8 +415,7 @@ load_fuse_config(void)
     items->auto_free = 1;
     values = list_create();
     values->auto_free = 1;
-    g_snprintf(cfg_file, 255, "%s/sesman.ini", XRDP_CFG_PATH);
-    file_by_name_read_section(cfg_file, "Chansrv", items, values);
+    file_by_name_read_section(g_sesman_ini_file, "Chansrv", items, values);
     for (index = 0; index < items->count; index++)
     {
         item = (char *)list_get_item(items, index);

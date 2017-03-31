@@ -63,6 +63,7 @@ int g_rail_chan_id = -1;    /* rail    */
 int g_restrict_outbound_clipboard = 0;
 
 char *g_exec_name;
+const char *g_sesman_ini_file;
 tbus g_exec_event;
 tbus g_exec_mutex;
 tbus g_exec_sem;
@@ -1627,22 +1628,19 @@ main_cleanup(void)
 static int
 read_ini(void)
 {
-    char filename[256];
     struct list *names;
     struct list *values;
     char *name;
     char *value;
     int index;
 
-    g_memset(filename, 0, (sizeof(char) * 256));
     names = list_create();
     names->auto_free = 1;
     values = list_create();
     values->auto_free = 1;
     g_use_unix_socket = 0;
-    g_snprintf(filename, 255, "%s/sesman.ini", XRDP_CFG_PATH);
 
-    if (file_by_name_read_section(filename, "Globals", names, values) == 0)
+    if (file_by_name_read_section(g_sesman_ini_file, "Globals", names, values) == 0)
     {
         for (index = 0; index < names->count; index++)
         {
@@ -1785,6 +1783,13 @@ main(int argc, char **argv)
     struct log_config logconfig;
     enum logLevels log_level;
     char *restrict_outbound_clipboard_env;
+
+    if (argc < 2) {
+        g_writeln("usage: %s sesman.ini", argv[0]);
+        return 1;
+    }
+    g_sesman_ini_file = argv[1];
+
     g_init("xrdp-chansrv"); /* os_calls */
 
     log_path[255] = 0;

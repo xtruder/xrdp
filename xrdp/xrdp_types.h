@@ -539,6 +539,7 @@ struct xrdp_startup_params
   int tcp_nodelay;
   int tcp_keepalive;
   int use_vsock;
+  char xrdp_ini_file[256];
 };
 
 /*
